@@ -66,7 +66,23 @@
             <!--            </a-popconfirm>-->
           </span>
             <span v-else>
-            <a :disabled="editingKey !== ''" @click="() => edit(record)">修改</a>
+              <a :disabled="editingKey !== ''" @click="() => edit(record)">修改</a>
+              <a-divider type="vertical"/>
+              <a-tooltip placement="top">
+                <template slot="title">
+                  <span>是否禁用接收者</span>
+                </template>
+                  <a-switch :default-checked="record.enable===0" size="small"
+                            @change="(checked) => onChange(checked,record)">
+                    <a-icon slot="checkedChildren" type="check"/>
+                    <a-icon slot="unCheckedChildren" type="close"/>
+                </a-switch>
+              </a-tooltip>
+              <a-divider type="vertical"/>
+
+              <a :disabled="editingKey !== ''" @click="() => deleteItem(record)">删除</a>
+
+
           </span>
           </div>
         </template>
@@ -80,7 +96,7 @@
 </template>
 
 <script>
-import {CreateReceiver, ListReceiver, UpdateReceiver} from './api/receiver'
+import {CreateReceiver, ListReceiver, UpdateReceiver,DelReceiver} from './api/receiver'
 
 export default {
   name: "vReceiver",
@@ -164,6 +180,7 @@ export default {
           this.showAddButton = true
           this.showFormModel = false
           this.CreateReceiverHandler()
+
         } else {
           return false;
         }
@@ -177,7 +194,8 @@ export default {
       CreateReceiver(this.form).then(res => {
         if (res.data.flag) {
           this.loading = false;
-          this.form={}
+          this.form = {}
+          this.ListReceiverHandler();
         } else if (res.data.flag !== true) {
           this.$message.error(res.data.msg);
         }
@@ -237,7 +255,45 @@ export default {
         this.modifyItem.name = value
       }
     },
+    onChange(checked, record) {
+      if (checked) {
+        record.enable = 0;
+      } else {
+        record.enable = 1;
+      }
 
+      UpdateReceiver(record).then(res => {
+        if (res.data.flag) {
+          const newData = [...this.ReceiverData];
+          const target = newData.find(item => record.id === item.id);
+          if (target) {
+            delete target.editable;
+            // 合并数组
+            Object.assign(newData, target);
+            this.ReceiverData = newData;
+          }
+          this.editingKey = '';
+        } else if (res.data.flag !== true) {
+          this.$message.error(res.data.msg);
+        }
+      });
+    },
+
+
+    deleteItem(record) {
+      console.log(record)
+      let params={
+        id:record.id
+      }
+      DelReceiver(params).then(res => {
+        if (res.data.flag) {
+          this.ReceiverData = this.ReceiverData.filter(t => t.id != params.id)
+          this.editingKey = '';
+        } else if (res.data.flag !== true) {
+          this.$message.error(res.data.msg);
+        }
+      });
+    }
   },
 }
 </script>

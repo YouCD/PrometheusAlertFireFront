@@ -29,7 +29,7 @@ export function UpdateReceiver(params) {
 export function DelReceiver(params) {
   return request({
     url: '/api/receiver',
-    data:params,
+    params:params,
     method: 'DELETE',
   })
 }
