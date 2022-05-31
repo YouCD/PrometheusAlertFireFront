@@ -1,4 +1,4 @@
-import request from "../utils/request"
+import request from "../../utils/request"
 
 // 获取 订阅规则
 export function ListSubscribe(params) {
@@ -13,7 +13,7 @@ export function CreateSubscribe(params) {
   return request({
     url: '/api/subscribe',
     data:params,
-    method: 'GET',
+    method: 'POST',
   })
 }
 // 修改 订阅规则

@@ -33,3 +33,10 @@ export function DelReceiver(params) {
     method: 'DELETE',
   })
 }
+
+export function searchReceiver(params) {
+  return request({
+    url: '/api/receiver/search',
+    params:params,
+  })
+}

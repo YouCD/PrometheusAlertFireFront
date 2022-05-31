@@ -79,9 +79,9 @@
                 </a-switch>
               </a-tooltip>
               <a-divider type="vertical"/>
-
-              <a :disabled="editingKey !== ''" @click="() => deleteItem(record)">删除</a>
-
+              <a-popconfirm title="确定删除吗？"     ok-text="确定"     cancel-text="取消"   @confirm="() => deleteItem(record)"    >
+                    <a :disabled="editingKey !== ''" >删除</a>
+              </a-popconfirm>
 
           </span>
           </div>
@@ -96,7 +96,7 @@
 </template>
 
 <script>
-import {CreateReceiver, ListReceiver, UpdateReceiver,DelReceiver} from './api/receiver'
+import {CreateReceiver, DelReceiver, ListReceiver, UpdateReceiver} from './api/receiver'
 
 export default {
   name: "vReceiver",
@@ -282,8 +282,8 @@ export default {
 
     deleteItem(record) {
       console.log(record)
-      let params={
-        id:record.id
+      let params = {
+        id: record.id
       }
       DelReceiver(params).then(res => {
         if (res.data.flag) {
