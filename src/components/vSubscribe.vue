@@ -9,7 +9,7 @@
           :rules="rules"
           layout="inline"
       >
-        <a-form-model-item ref="rule" label="Rule" prop="rule" >
+        <a-form-model-item ref="rule" label="Rule" prop="rule">
           <a-select
               show-search
               style="width: 300px"
@@ -21,7 +21,7 @@
             </a-select-option>
           </a-select>
         </a-form-model-item>
-        <a-form-model-item label="Receiver" prop="selectUserIds"  >
+        <a-form-model-item label="Receiver" prop="selectUserIds">
           <a-select
               mode="multiple"
               label-in-value
@@ -39,7 +39,7 @@
           </a-select>
         </a-form-model-item>
 
-        <a-form-model-item ref="label" label="Label" prop="label"  >
+        <a-form-model-item ref="label" label="Label" prop="label">
           <a-input v-model="form.label" placeholder='多个请用","隔开'/>
         </a-form-model-item>
 
@@ -47,70 +47,77 @@
           <a-button type="primary" @click="onSubmit">
             添加
           </a-button>
+          <a-button type="primary" style="margin-left: 10px;" @click="CancelShowFormModel">
+            取消
+          </a-button>
         </a-form-model-item>
 
 
       </a-form-model>
     </div>
     <div class="tableClass">
-      <!--      <a-table-->
-      <!--          :columns="columns"-->
-      <!--          :row-key="record => record.id"-->
-      <!--          :data-source="ReceiverData"-->
-      <!--          :pagination="pagination"-->
-      <!--          :loading="loading"-->
-      <!--          @change="handleTableChange"-->
-      <!--      >-->
-      <!--        <template-->
-      <!--            v-for="col in ['name', 'telephone']"-->
-      <!--            :slot="col"-->
-      <!--            slot-scope="text, record"-->
-      <!--        >-->
-      <!--          <div :key="col">-->
-      <!--            <a-input-->
-      <!--                v-if="record.editable"-->
-      <!--                style="margin: -5px 0"-->
-      <!--                :value="text"-->
-      <!--                @change="e => handleChange(e.target.value, record.id, col)"-->
-      <!--            />-->
-      <!--            <template v-else>-->
-      <!--              {{ text }}-->
-      <!--            </template>-->
-      <!--          </div>-->
-      <!--        </template>-->
-
-      <!--        <template slot="action" slot-scope="text, record">-->
-      <!--          <div class="editable-row-operations">-->
-      <!--          <span v-if="record.editable">-->
-      <!--            <a @click="() => save(record)">保存</a>-->
-      <!--            &lt;!&ndash;            <a-popconfirm title="Sure to cancel?" @confirm="() => cancel(record.id)">&ndash;&gt;-->
-      <!--              <a @click="cancel()">取消</a>-->
-      <!--            &lt;!&ndash;            </a-popconfirm>&ndash;&gt;-->
-      <!--          </span>-->
-      <!--            <span v-else>-->
-      <!--              <a :disabled="editingKey !== ''" @click="() => edit(record)">修改</a>-->
-      <!--              <a-divider type="vertical"/>-->
-      <!--              <a-tooltip placement="top">-->
-      <!--                <template slot="title">-->
-      <!--                  <span>是否禁用接收者</span>-->
-      <!--                </template>-->
-      <!--                  <a-switch :default-checked="record.enable===0" size="small"-->
-      <!--                            @change="(checked) => onChange(checked,record)">-->
-      <!--                    <a-icon slot="checkedChildren" type="check"/>-->
-      <!--                    <a-icon slot="unCheckedChildren" type="close"/>-->
-      <!--                </a-switch>-->
-      <!--              </a-tooltip>-->
-      <!--              <a-divider type="vertical"/>-->
-      <!--              <a-popconfirm title="确定删除吗？"     ok-text="确定"     cancel-text="取消"   @confirm="() => deleteItem(record)"    >-->
-      <!--                    <a :disabled="editingKey !== ''" >删除</a>-->
-      <!--              </a-popconfirm>-->
-
-      <!--          </span>-->
-      <!--          </div>-->
-      <!--        </template>-->
+            <a-table
+                :columns="columns"
+                :row-key="record => record.id"
+                :data-source="SubscribeData"
+                :pagination="pagination"
+                :loading="loading"
+                @change="handleTableChange"
+            >
+              <template
+                  v-for="col in ['name', 'telephone']"
+                  :slot="col"
+                  slot-scope="text, record"
+              >
+                <div :key="col">
+                  <a-input
+                      v-if="record.editable"
+                      style="margin: -5px 0"
+                      :value="text"
+                      @change="e => handleChange(e.target.value, record.id, col)"
+                  />
+                  <template v-else>
+                    {{ text }}
+                  </template>
+                </div>
+              </template>
 
 
-      <!--      </a-table>-->
+
+
+
+              <template slot="action" slot-scope="text, record">
+                <div class="editable-row-operations">
+                <span v-if="record.editable">
+                  <a @click="() => save(record)">保存</a>
+                  <!--            <a-popconfirm title="Sure to cancel?" @confirm="() => cancel(record.id)">-->
+                    <a @click="cancel()">取消</a>
+                  <!--            </a-popconfirm>-->
+                </span>
+                  <span v-else>
+                    <a :disabled="editingKey !== ''" @click="() => edit(record)">修改</a>
+                    <a-divider type="vertical"/>
+                    <a-tooltip placement="top">
+                      <template slot="title">
+                        <span>是否禁用接收者</span>
+                      </template>
+                        <a-switch :default-checked="record.enable===0" size="small"
+                                  @change="(checked) => onChange(checked,record)">
+                          <a-icon slot="checkedChildren" type="check"/>
+                          <a-icon slot="unCheckedChildren" type="close"/>
+                      </a-switch>
+                    </a-tooltip>
+                    <a-divider type="vertical"/>
+                    <a-popconfirm title="确定删除吗？"     ok-text="确定"     cancel-text="取消"   @confirm="() => deleteItem(record)"    >
+                          <a :disabled="editingKey !== ''" >删除</a>
+                    </a-popconfirm>
+
+                </span>
+                </div>
+              </template>
+
+
+            </a-table>
     </div>
 
 
@@ -119,8 +126,9 @@
 
 <script>
 import {fetchPrometheusRules} from "@/components/api/prometheus";
-import {searchReceiver} from './api/receiver'
-import {CreateSubscribe} from './api/subscribe'
+import { searchReceiver, } from './api/receiver'
+import {CreateSubscribe, DelSubscribe, ListSubscribe,UpdateSubscribe} from './api/subscribe'
+import moment from "moment"
 
 export default {
   name: "vSubscribe",
@@ -135,15 +143,15 @@ export default {
       },
       form: {
         rule: '',
-        selectUserIds:[],
-        label:"",
+        selectUserIds: [],
+        label: "",
       },
       fetching: false,
       users: [],
-
-
-
-
+      defaultPage: {
+        page_index: 1,
+        page_size: 10,
+      },
 
       pagination: {
         pageSize: 10, // 默认每页显示数量
@@ -153,34 +161,50 @@ export default {
         showSizeChange: (current, pageSize) => (this.pageSize = pageSize), // 改变每页数量时更新显示
         total: 0,
       },
-      loading: false,
+      SubscribeData: [],
       columns: [
-        {title: 'Name', dataIndex: 'name', scopedSlots: {customRender: 'name'}},
-        {title: 'Telephone', dataIndex: 'telephone', scopedSlots: {customRender: 'telephone'}},
-        {title: 'Action', key: 'action', scopedSlots: {customRender: 'action'}}
+        {title: 'Prom Rule名称', dataIndex: 'rule_name', scopedSlots: {customRender: 'name'}},
+        {title: '标签', dataIndex: 'label', scopedSlots: {customRender: 'telephone'}},
+        {title: '修改时间', dataIndex: 'timestamp', customRender: function (time) {
+            return  moment.unix(time).format("YYYY-MM-DD hh:mm:ss");
+          },},
+        {title: '操作', key: '操作', scopedSlots: {customRender: 'action'}},
       ],
+      CacheSubscribeData: {},
+
+      
+      loading: false,
+
       showAddModal: false,
       showFormModel: false,
       other: '',
-
-
-      defaultPage: {
-        page_index: 1,
-        page_size: 10,
-      },
-      ReceiverData: [],
       editingKey: '',
 
       modifyItem: {},
 
-      CacheReceiverData: {},
+
     };
   },
 
   mounted() {
     this.fetchPrometheusRulesHandler();
+    this.ListSubscribeHandler();
   },
   methods: {
+    handleTableChange(pagination) {
+      let defaultPage = {
+        page_index: pagination.current,
+        page_size: pagination.pageSize
+      }
+      ListSubscribe(defaultPage).then(res => {
+        if (res.data.flag) {
+          this.SubscribeData = res.data.data.data
+          this.pagination.total = res.data.data.count;
+        } else if (res.data.flag !== true) {
+          this.$message.error(res.data.msg);
+        }
+      });
+    },
     fetchPrometheusRulesHandler() {
       fetchPrometheusRules().then(res => {
         if (res.data.flag) {
@@ -209,9 +233,9 @@ export default {
       });
     },
     handleChange(value) {
-      this.form.selectUserIds=[]
+      this.form.selectUserIds = []
       value.forEach((item) => {
-        this.form.selectUserIds.push({id:item.key,name:item.label})
+        this.form.selectUserIds.push({id: item.key, name: item.label})
       });
     },
     onSubmit() {
@@ -225,16 +249,99 @@ export default {
         }
       });
     },
-    CreateSubscribeHandler(){
+    CreateSubscribeHandler() {
       CreateSubscribe(this.form).then(res => {
         if (res.data.flag) {
-          this.form={}
+          this.form = {}
         } else if (res.data.flag !== true) {
           this.$message.error(res.data.msg);
         }
       })
     },
+    ListSubscribeHandler() {
+          ListSubscribe(this.defaultPage).then(res => {
+        if (res.data.flag) {
+          this.SubscribeData = res.data.data.data;
+        } else if (res.data.flag !== true) {
+          this.$message.error(res.data.msg);
+        }
+      })
+    },
+    CancelShowFormModel() {
+      this.showProAddButton = true
+      this.showFormModel = false
+    },
+    edit(obj) {
+      this.CacheSubscribeData = {}
+      this.CacheSubscribeData = JSON.parse(JSON.stringify(this.SubscribeData))
+      this.modifyItem = obj
+      const newData = [...this.SubscribeData];
+      const target = newData.find(item => obj.id === item.id);
+      this.editingKey = obj.id;
+      if (target) {
+        target.editable = true;
+        this.SubscribeData = newData;
+      }
+    },
+    onChange(checked, record) {
+      if (checked) {
+        record.enable = 0;
+      } else {
+        record.enable = 1;
+      }
 
+      UpdateSubscribe(record).then(res => {
+        if (res.data.flag) {
+          const newData = [...this.SubscribeData];
+          const target = newData.find(item => record.id === item.id);
+          if (target) {
+            delete target.editable;
+            // 合并数组
+            Object.assign(newData, target);
+            this.SubscribeData = newData;
+          }
+          this.editingKey = '';
+        } else if (res.data.flag !== true) {
+          this.$message.error(res.data.msg);
+        }
+      });
+    },
+    save(record) {
+      UpdateSubscribe(this.modifyItem).then(res => {
+        if (res.data.flag) {
+          const newData = [...this.SubscribeData];
+          const target = newData.find(item => record.id === item.id);
+          if (target) {
+            delete target.editable;
+            // 合并数组
+            Object.assign(newData, target);
+            this.SubscribeData = newData;
+          }
+          this.editingKey = '';
+
+        } else if (res.data.flag !== true) {
+          this.$message.error(res.data.msg);
+        }
+      });
+    },
+    cancel() {
+      this.SubscribeData = this.CacheSubscribeData;
+      this.editingKey = '';
+    },
+    deleteItem(record) {
+      console.log(record)
+      let params = {
+        id: record.id
+      }
+      DelSubscribe(params).then(res => {
+        if (res.data.flag) {
+          this.SubscribeData = this.SubscribeData.filter(t => t.id != params.id)
+          this.editingKey = '';
+        } else if (res.data.flag !== true) {
+          this.$message.error(res.data.msg);
+        }
+      });
+    }
   },
 
 
