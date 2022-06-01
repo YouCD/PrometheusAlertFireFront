@@ -97,6 +97,7 @@
 
 <script>
 import {CreateReceiver, DelReceiver, ListReceiver, UpdateReceiver} from './api/receiver'
+import moment from "moment";
 
 export default {
   name: "vReceiver",
@@ -112,9 +113,12 @@ export default {
       },
       loading: false,
       columns: [
-        {title: 'Name', dataIndex: 'name', scopedSlots: {customRender: 'name'}},
-        {title: 'Telephone', dataIndex: 'telephone', scopedSlots: {customRender: 'telephone'}},
-        {title: 'Action', key: 'action', scopedSlots: {customRender: 'action'}}
+        {title: '姓名', dataIndex: 'name', scopedSlots: {customRender: 'name'}},
+        {title: '手机号', dataIndex: 'telephone', scopedSlots: {customRender: 'telephone'}},
+        {title: '修改时间', dataIndex: 'timestamp', customRender: function (time) {
+            return  moment.unix(time).format("YYYY-MM-DD hh:mm:ss");
+          },},
+        {title: '操作', key: 'action', scopedSlots: {customRender: 'action'}}
       ],
       showAddModal: false,
       showAddButton: true,
@@ -281,7 +285,6 @@ export default {
 
 
     deleteItem(record) {
-      console.log(record)
       let params = {
         id: record.id
       }

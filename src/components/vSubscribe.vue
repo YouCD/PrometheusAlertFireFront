@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="TitleClass">
+    <div class="TitleClass"  ref="top">
       <a-button v-if="showProAddButton" type="primary" @click="showAddModalHandler">添加订阅规则</a-button>
       <a-form-model
           v-if="showFormModel"
@@ -30,7 +30,7 @@
               :filter-option="false"
               :not-found-content="fetching ? undefined : null"
               @search="fetchUser"
-              @change="handleChange"
+              @change="SelectHandleChange"
           >
             <a-spin v-if="fetching" slot="notFoundContent" size="small"/>
             <a-select-option v-for="d in users" :key="d.id">
@@ -65,7 +65,7 @@
                 @change="handleTableChange"
             >
               <template
-                  v-for="col in ['name', 'telephone']"
+                  v-for="col in ['rule_name', 'label']"
                   :slot="col"
                   slot-scope="text, record"
               >
@@ -99,7 +99,7 @@
                     <a-divider type="vertical"/>
                     <a-tooltip placement="top">
                       <template slot="title">
-                        <span>是否禁用接收者</span>
+                        <span>是否禁用订阅规则</span>
                       </template>
                         <a-switch :default-checked="record.enable===0" size="small"
                                   @change="(checked) => onChange(checked,record)">
@@ -163,8 +163,8 @@ export default {
       },
       SubscribeData: [],
       columns: [
-        {title: 'Prom Rule名称', dataIndex: 'rule_name', scopedSlots: {customRender: 'name'}},
-        {title: '标签', dataIndex: 'label', scopedSlots: {customRender: 'telephone'}},
+        {title: 'Prom Rule名称', dataIndex: 'rule_name', scopedSlots: {customRender: 'rule_name'}},
+        {title: '标签', dataIndex: 'label', scopedSlots: {customRender: 'label'}},
         {title: '修改时间', dataIndex: 'timestamp', customRender: function (time) {
             return  moment.unix(time).format("YYYY-MM-DD hh:mm:ss");
           },},
@@ -189,8 +189,11 @@ export default {
   mounted() {
     this.fetchPrometheusRulesHandler();
     this.ListSubscribeHandler();
+    // let topHeight = this.$refs.top.offsetHeight // 头部高度
+    // console.log(topHeight)
   },
   methods: {
+
     handleTableChange(pagination) {
       let defaultPage = {
         page_index: pagination.current,
@@ -232,7 +235,7 @@ export default {
         }
       });
     },
-    handleChange(value) {
+    SelectHandleChange(value) {
       this.form.selectUserIds = []
       value.forEach((item) => {
         this.form.selectUserIds.push({id: item.key, name: item.label})
@@ -329,7 +332,6 @@ export default {
       this.editingKey = '';
     },
     deleteItem(record) {
-      console.log(record)
       let params = {
         id: record.id
       }
@@ -341,7 +343,14 @@ export default {
           this.$message.error(res.data.msg);
         }
       });
-    }
+    },
+    handleChange(value, key, column) {
+      if (column === "label") {
+        this.modifyItem.label = value
+      } else if (column === "rule_name") {
+        this.modifyItem.rule_name = value
+      }
+    },
   },
 
 

@@ -3,9 +3,11 @@
     <a-layout-sider
         breakpoint="lg"
         collapsed-width="0"
-        @collapse="onCollapse"
-        @breakpoint="onBreakpoint"
+
     >
+<!--      @collapse="onCollapse"-->
+<!--      @breakpoint="onBreakpoint"-->
+
       <div class="logo">PrometheusAlertFire</div>
       <a-menu theme="dark" mode="inline" >
         <a-menu-item key="1">
@@ -53,12 +55,12 @@ export default {
     vContent
   },
   methods: {
-    onCollapse(collapsed, type) {
-      console.log(collapsed, type);
-    },
-    onBreakpoint(broken) {
-      console.log(broken);
-    },
+    // onCollapse(collapsed, type) {
+    //   console.log("vvvvvvvvv",collapsed, type);
+    // },
+    // onBreakpoint(broken) {
+    //   console.log(broken,"brokenbrokenbroken");
+    // },
   },
 };
 </script>
