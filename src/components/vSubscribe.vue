@@ -238,7 +238,7 @@ export default {
     SelectHandleChange(value) {
       this.form.selectUserIds = []
       value.forEach((item) => {
-        this.form.selectUserIds.push({id: item.key, name: item.label})
+        this.form.selectUserIds.push({id: item.key, name: item.label.trim()})
       });
     },
     onSubmit() {
