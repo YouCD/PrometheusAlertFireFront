@@ -1,0 +1,16 @@
+language: node_js
+
+node_js: v17.9.0
+install: make
+
+script: make build
+deploy:
+  provider: releases
+  api_key: ${GITHUB_TOKEN}
+  file_glob: true
+  file: dist.txz
+  skip_cleanup: true
+  on:
+    repo: YouCD/PrometheusAlertFireFront
+    # tag才触发发布
+    tags: true
