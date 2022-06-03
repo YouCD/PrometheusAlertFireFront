@@ -28,7 +28,7 @@ export function UpdateSubscribe(params) {
 export function DelSubscribe(params) {
   return request({
     url: '/api/subscribe',
-    data:params,
+    params:params,
     method: 'DELETE',
   })
 }

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="TitleClass">
-      <a-button v-if="showAddButton" type="primary" @click="showAddModalHandler">添加接受者</a-button>
+      <a-button v-if="showAddButton" type="primary" @click="showAddModalHandler">添加接收者</a-button>
       <a-form-model
           v-if="showFormModel"
           ref="ruleForm"
@@ -16,6 +16,10 @@
         <a-form-model-item ref="Telephone" label="Telephone" prop="Telephone">
           <a-input v-model="form.Telephone"/>
         </a-form-model-item>
+        <a-form-model-item  label="WechatUserID" >
+          <a-input v-model="form.wechat_user_id"/>
+        </a-form-model-item>
+
         <a-form-model-item>
           <a-button type="primary" @click="onSubmit">
             添加
@@ -40,7 +44,7 @@
           @change="handleTableChange"
       >
         <template
-            v-for="col in ['name', 'telephone']"
+            v-for="col in ['name', 'telephone','wechat_user_id']"
             :slot="col"
             slot-scope="text, record"
         >
@@ -115,6 +119,7 @@ export default {
       columns: [
         {title: '姓名', dataIndex: 'name', scopedSlots: {customRender: 'name'}},
         {title: '手机号', dataIndex: 'telephone', scopedSlots: {customRender: 'telephone'}},
+        {title: '企业微信id', dataIndex: 'wechat_user_id', scopedSlots: {customRender: 'wechat_user_id'}},
         {title: '修改时间', dataIndex: 'timestamp', customRender: function (time) {
             return  moment.unix(time).format("YYYY-MM-DD hh:mm:ss");
           },},
@@ -127,11 +132,11 @@ export default {
       form: {
         name: '',
         Telephone: '',
+        wechat_user_id:'',
       },
       rules: {
         name: [{required: true, message: '请输入姓名', trigger: 'change'}],
         Telephone: [{required: true, message: '请输入手机号', trigger: 'change'}],
-
       },
 
       defaultPage: {
@@ -257,6 +262,8 @@ export default {
         this.modifyItem.telephone = value
       } else if (column === "name") {
         this.modifyItem.name = value
+      }else if (column === "wechat_user_id") {
+        this.modifyItem.wechat_user_id = value
       }
     },
     onChange(checked, record) {

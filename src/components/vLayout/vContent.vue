@@ -6,25 +6,25 @@
        <a-row>
          <a-col :span="8">
            <div class="card">
-             <a-icon type="user" style="padding-right: 5px"/>发送告警信息:
+             <my-icon type="icon-AlertOn" style="padding-right: 5px;font-size: 15px" />发送告警信息:
              <div class="cardData">
-               {{FireMessage}}
+               <span>{{SummaryData.fireTotal}}</span><span style="color: red;font-size: 10px;padding-right: 20px">次</span><span  style="color: red;">{{(SummaryData.fireTotal-SummaryData.fireSuccessTotal)}}</span><span style="color: red;font-size: 10px">失败</span>
              </div>
            </div>
          </a-col>
          <a-col :span="8">
            <div class="card">
-             <a-icon type="user" style="padding-right: 5px"/>告警订阅者:
+             <my-icon type="icon-user" style="padding-right: 5px;font-size: 15px"/>告警订阅者:
              <div class="cardData">
-               {{SubscribeCount}}
+               {{SummaryData.receiverTotal}}
              </div>
            </div>
          </a-col>
          <a-col :span="8">
            <div class="card">
-             <a-icon type="user" style="padding-right: 5px"/>告警订阅规则:
+             <my-icon type="icon-rule" style="padding-right: 5px;font-size: 15px"/>告警订阅规则:
              <div class="cardData">
-               {{AlertRules}}
+               {{SummaryData.subscribeTotal}}
              </div>
            </div>
          </a-col>
@@ -43,22 +43,26 @@
 </template>
 
 <script>
-// import vReceiver from '../vReceiver'
 
+import {ListSummary} from  '../api/summary'
 export default {
   name: "vContent",
   // components: {vReceiver},
   data() {
     return {
-      FireMessage: 1,
-      SubscribeCount: 1,
-      AlertRules: 1,
       showCount:true,
       countStyle:{background: 'white',padding:'15px',border:'1px solid #7675753D',height:'170px'},
       showCountIcon:"eye",
+      SummaryData:{
+        fireTotal: 0,
+        fireSuccessTotal: 0,
+        subscribeTotal: 0,
+        receiverTotal: 0},
     }
   },
-  mounted() {},
+  mounted() {
+    this.ListSummaryHandler();
+  },
   methods:{
     showCountHandler(){
       this.showCount=!this.showCount
@@ -69,7 +73,20 @@ export default {
         this.countStyle.height="170px"
         this.showCountIcon="eye"
       }
-    }
+    },
+
+    ListSummaryHandler() {
+
+      ListSummary().then(res => {
+        if (res.data.flag) {
+
+          this.SummaryData = res.data.data.data
+        } else if (res.data.flag !== true) {
+          this.$message.error(res.data.msg);
+        }
+      });
+    },
+
   }
 }
 </script>

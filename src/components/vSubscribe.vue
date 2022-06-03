@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="TitleClass"  ref="top">
+    <div class="TitleClass" ref="top">
       <a-button v-if="showProAddButton" type="primary" @click="showAddModalHandler">添加订阅规则</a-button>
       <a-form-model
           v-if="showFormModel"
@@ -56,45 +56,70 @@
       </a-form-model>
     </div>
     <div class="tableClass">
-            <a-table
-                :columns="columns"
-                :row-key="record => record.id"
-                :data-source="SubscribeData"
-                :pagination="pagination"
-                :loading="loading"
-                @change="handleTableChange"
-            >
-              <template
-                  v-for="col in ['rule_name', 'label']"
-                  :slot="col"
-                  slot-scope="text, record"
-              >
-                <div :key="col">
-                  <a-input
-                      v-if="record.editable"
-                      style="margin: -5px 0"
-                      :value="text"
-                      @change="e => handleChange(e.target.value, record.id, col)"
-                  />
-                  <template v-else>
-                    {{ text }}
-                  </template>
-                </div>
-              </template>
+      <a-table
+          :columns="columns"
+          :row-key="record => record.id"
+          :data-source="SubscribeData"
+          :pagination="pagination"
+          :loading="loading"
+          @change="handleTableChange"
+      >
+        <template
+            v-for="col in ['rule_name', 'label']"
+            :slot="col"
+            slot-scope="text, record"
+        >
+          <div :key="col">
+            <a-input
+                v-if="record.editable"
+                style="margin: -5px 0"
+                :value="text"
+                @change="e => handleChange(e.target.value, record.id, col)"
+            />
+            <template v-else>
+              {{ text }}
+            </template>
+          </div>
+        </template>
+
+        <template slot="receiver" slot-scope="text, record">
+          <div id="cccc" v-if="!record.editable">
+            <template v-if="JSON.parse(text).length>1">
+              <span :key="index" v-for="(item,index) in JSON.parse(text)">{{ item.name }}&#12288;</span>
+            </template>
+            <template v-else-if="JSON.parse(text).length=1">
+              <span :key="index" v-for="(item,index) in JSON.parse(text)">{{ item.name }}</span>
+            </template>
+          </div>
+          <a-select
+              v-if="record.editable"
+              mode="multiple"
+              label-in-value
+              placeholder="请添加接收者"
+              style="width: 300px"
+              :filter-option="false"
+              :not-found-content="fetching ? undefined : null"
+              @search="fetchUser"
+              @change="SelectHandleChangeInTable"
+          >
+            <a-spin v-if="fetching" slot="notFoundContent" size="small"/>
+            <a-select-option v-for="d in users" :key="d.id">
+              {{ d.name }}
+            </a-select-option>
+          </a-select>
+
+        </template>
 
 
-
-
-
-              <template slot="action" slot-scope="text, record">
-                <div class="editable-row-operations">
+        <template slot="action" slot-scope="text, record">
+          <div class="editable-row-operations">
                 <span v-if="record.editable">
                   <a @click="() => save(record)">保存</a>
                   <!--            <a-popconfirm title="Sure to cancel?" @confirm="() => cancel(record.id)">-->
                     <a @click="cancel()">取消</a>
                   <!--            </a-popconfirm>-->
                 </span>
-                  <span v-else>
+            <span v-else>
                     <a :disabled="editingKey !== ''" @click="() => edit(record)">修改</a>
                     <a-divider type="vertical"/>
                     <a-tooltip placement="top">
@@ -108,16 +133,16 @@
                       </a-switch>
                     </a-tooltip>
                     <a-divider type="vertical"/>
-                    <a-popconfirm title="确定删除吗？"     ok-text="确定"     cancel-text="取消"   @confirm="() => deleteItem(record)"    >
-                          <a :disabled="editingKey !== ''" >删除</a>
+                    <a-popconfirm title="确定删除吗？" ok-text="确定" cancel-text="取消" @confirm="() => deleteItem(record)">
+                          <a :disabled="editingKey !== ''">删除</a>
                     </a-popconfirm>
 
                 </span>
-                </div>
-              </template>
+          </div>
+        </template>
 
 
-            </a-table>
+      </a-table>
     </div>
 
 
@@ -126,8 +151,8 @@
 
 <script>
 import {fetchPrometheusRules} from "@/components/api/prometheus";
-import { searchReceiver, } from './api/receiver'
-import {CreateSubscribe, DelSubscribe, ListSubscribe,UpdateSubscribe} from './api/subscribe'
+import {searchReceiver,} from './api/receiver'
+import {CreateSubscribe, DelSubscribe, ListSubscribe, UpdateSubscribe} from './api/subscribe'
 import moment from "moment"
 
 export default {
@@ -138,7 +163,7 @@ export default {
       PrometheusRules: [],
       rules: {
         rule: [{required: true, message: '请选择Rule', trigger: 'change'}],
-        selectUserIds: [{required: true, message: '请添加告警接受者', trigger: 'change'}],
+        selectUserIds: [{required: true, message: '请添加告警接收者', trigger: 'change'}],
         label: [{required: true, message: '请输入Label', trigger: 'change'}],
       },
       form: {
@@ -165,14 +190,18 @@ export default {
       columns: [
         {title: 'Prom Rule名称', dataIndex: 'rule_name', scopedSlots: {customRender: 'rule_name'}},
         {title: '标签', dataIndex: 'label', scopedSlots: {customRender: 'label'}},
-        {title: '修改时间', dataIndex: 'timestamp', customRender: function (time) {
-            return  moment.unix(time).format("YYYY-MM-DD hh:mm:ss");
-          },},
+
+        {title: '接收者', dataIndex: 'receiver', scopedSlots: {customRender: 'receiver'}},
+        {
+          title: '修改时间', dataIndex: 'timestamp', customRender: function (time) {
+            return moment.unix(time).format("YYYY-MM-DD hh:mm:ss");
+          },
+        },
         {title: '操作', key: '操作', scopedSlots: {customRender: 'action'}},
       ],
       CacheSubscribeData: {},
 
-      
+
       loading: false,
 
       showAddModal: false,
@@ -182,7 +211,7 @@ export default {
 
       modifyItem: {},
 
-
+      defaultValue:[],
     };
   },
 
@@ -226,7 +255,9 @@ export default {
       this.form.rule = value
     },
     fetchUser(value) {
-      this.fetching = true;
+      console.log( this.users)
+
+      // this.fetching = true;
       searchReceiver({name: value}).then(res => {
         if (res.data.flag) {
           this.users = res.data.data.data
@@ -256,13 +287,14 @@ export default {
       CreateSubscribe(this.form).then(res => {
         if (res.data.flag) {
           this.form = {}
+          this.ListSubscribeHandler()
         } else if (res.data.flag !== true) {
           this.$message.error(res.data.msg);
         }
       })
     },
     ListSubscribeHandler() {
-          ListSubscribe(this.defaultPage).then(res => {
+      ListSubscribe(this.defaultPage).then(res => {
         if (res.data.flag) {
           this.SubscribeData = res.data.data.data;
         } else if (res.data.flag !== true) {
@@ -278,6 +310,9 @@ export default {
       this.CacheSubscribeData = {}
       this.CacheSubscribeData = JSON.parse(JSON.stringify(this.SubscribeData))
       this.modifyItem = obj
+      this.defaultValue.push({"id":1,"name":"YCD","telephone":"15531728256","timestamp":1654165333,"wechat_user_id":"YouChangDing","enable":0},{"id":3,"name":"YCD1","telephone":"123","timestamp":1654224335,"wechat_user_id":"i_can_do_it","enable":0})
+      // this.defaultValue.push("YCD","CCD")
+
       const newData = [...this.SubscribeData];
       const target = newData.find(item => obj.id === item.id);
       this.editingKey = obj.id;
@@ -350,6 +385,14 @@ export default {
       } else if (column === "rule_name") {
         this.modifyItem.rule_name = value
       }
+    },
+    SelectHandleChangeInTable(value) {
+      let receiver = []
+      value.forEach((item) => {
+        receiver.push({id: item.key, name: item.label.trim()})
+      });
+      this.modifyItem.receiver = JSON.stringify(receiver)
+
     },
   },
 
